@@ -1,0 +1,6 @@
+# Copy this file to local.properties (git-ignored) and fill in real values.
+sdk.dir=/path/to/Android/sdk
+
+# Client-safe, RESTRICTED Google Maps API key (Android app restriction + Maps SDK only).
+# Never put a server-side/unrestricted key here.
+MAPS_API_KEY=REQUIRED_SECRET_google_maps_android_key

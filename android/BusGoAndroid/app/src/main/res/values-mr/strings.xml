@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BusGo</string>
+    <string name="splash_tagline">सहज बस तिकीट बुकिंग</string>
+    <string name="home_from">कोठून</string>
+    <string name="home_to">कोठे</string>
+    <string name="home_journey_date">प्रवासाची तारीख</string>
+    <string name="home_search_buses">बस शोधा</string>
+    <string name="nav_home">मुख्यपृष्ठ</string>
+    <string name="nav_bookings">बुकिंग्ज</string>
+    <string name="nav_offers">ऑफर्स</string>
+    <string name="nav_profile">प्रोफाइल</string>
+    <string name="error_generic">काहीतरी चुकले. कृपया पुन्हा प्रयत्न करा.</string>
+    <string name="error_no_internet">इंटरनेट कनेक्शन नाही</string>
+    <string name="retry">पुन्हा प्रयत्न करा</string>
+</resources>

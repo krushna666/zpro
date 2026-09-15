@@ -1,0 +1,42 @@
+# Root
+.env
+.env.local
+.DS_Store
+*.log
+npm-debug.log*
+
+# Node
+node_modules/
+dist/
+build/
+coverage/
+
+# Backend
+backend/node_modules/
+backend/dist/
+backend/coverage/
+backend/.env
+backend/prisma/*.db
+
+# Admin
+admin/node_modules/
+admin/dist/
+admin/.env
+
+# Android
+android/BusGoAndroid/.gradle/
+android/BusGoAndroid/.idea/
+android/BusGoAndroid/local.properties
+android/BusGoAndroid/**/build/
+android/BusGoAndroid/captures/
+android/BusGoAndroid/.cxx/
+*.iml
+*.apk
+*.aab
+
+# Docker
+docker-compose.override.yml
+
+# Editors
+.vscode/
+.idea/

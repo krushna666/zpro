@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BusGo</string>
+
+    <string name="splash_tagline">Book bus tickets, hassle-free</string>
+
+    <string name="onboarding_title_1">Search thousands of buses</string>
+    <string name="onboarding_body_1">Compare operators, prices and seat availability in seconds</string>
+    <string name="onboarding_title_2">Pick your perfect seat</string>
+    <string name="onboarding_body_2">Interactive seat maps for seater, sleeper and semi-sleeper buses</string>
+    <string name="onboarding_title_3">Travel with confidence</string>
+    <string name="onboarding_body_3">Secure payments, live tracking and easy cancellations</string>
+    <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_skip">Skip</string>
+
+    <string name="login_title">Welcome back</string>
+    <string name="login_phone_hint">Mobile number</string>
+    <string name="login_continue">Continue</string>
+    <string name="login_email_login">Login with email instead</string>
+
+    <string name="otp_title">Verify your number</string>
+    <string name="otp_subtitle">Enter the 6-digit code sent to %1$s</string>
+    <string name="otp_resend">Resend code</string>
+    <string name="otp_resend_in">Resend in %1$ds</string>
+    <string name="otp_verify">Verify</string>
+
+    <string name="home_from">From</string>
+    <string name="home_to">To</string>
+    <string name="home_journey_date">Journey date</string>
+    <string name="home_search_buses">Search buses</string>
+    <string name="home_quick_upcoming_trips">Upcoming trips</string>
+    <string name="home_quick_bookings">Bookings</string>
+    <string name="home_quick_offers">Offers</string>
+    <string name="home_quick_help">Help</string>
+    <string name="home_quick_account">My account</string>
+    <string name="home_popular_routes">Popular routes</string>
+    <string name="home_recent_searches">Recent searches</string>
+    <string name="home_recommended_buses">Recommended for you</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_bookings">Bookings</string>
+    <string name="nav_offers">Offers</string>
+    <string name="nav_profile">Profile</string>
+
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_timeout">The request timed out. Please try again.</string>
+    <string name="retry">Retry</string>
+</resources>

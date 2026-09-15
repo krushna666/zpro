@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BusGo</string>
+    <string name="splash_tagline">आसानी से बस टिकट बुक करें</string>
+    <string name="home_from">कहाँ से</string>
+    <string name="home_to">कहाँ तक</string>
+    <string name="home_journey_date">यात्रा तिथि</string>
+    <string name="home_search_buses">बसें खोजें</string>
+    <string name="nav_home">होम</string>
+    <string name="nav_bookings">बुकिंग</string>
+    <string name="nav_offers">ऑफ़र</string>
+    <string name="nav_profile">प्रोफ़ाइल</string>
+    <string name="error_generic">कुछ गलत हो गया। कृपया पुनः प्रयास करें।</string>
+    <string name="error_no_internet">इंटरनेट कनेक्शन नहीं है</string>
+    <string name="retry">पुनः प्रयास करें</string>
+</resources>
