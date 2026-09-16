@@ -3,7 +3,7 @@
 A bus-ticket booking platform: native Android app, Node.js/TypeScript backend,
 React admin panel, PostgreSQL + Prisma, Redis, Docker Compose.
 
-> **Build status: Phase 2 of 10 (auth) mostly complete.** See
+> **Build status: Phase 3 of 10 (users/cities) backend complete.** See
 > [`docs/build-status.md`](docs/build-status.md) for exactly what's implemented,
 > what's scaffolded-but-unwired, and what's still to come. This is a large,
 > multi-phase build (see that doc for the phase plan); this README documents

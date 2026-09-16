@@ -14,12 +14,8 @@ import {
   type RefreshTokenPayload,
 } from '@/lib/tokens';
 import { env } from '@/config/env';
+import { toPublicUser, userInclude, type PublicUser, type UserWithRoles } from '@/modules/users/user.mapper';
 import type { LoginInput, OtpVerifyInput, RegisterInput } from './auth.schemas';
-
-const userInclude = Prisma.validator<Prisma.UserInclude>()({
-  roles: { include: { role: true } },
-});
-type UserWithRoles = Prisma.UserGetPayload<{ include: typeof userInclude }>;
 
 export interface SessionMeta {
   deviceId?: string;
@@ -27,36 +23,10 @@ export interface SessionMeta {
   ipAddress?: string;
 }
 
-export interface PublicUser {
-  id: string;
-  fullName: string;
-  email: string | null;
-  phone: string | null;
-  roles: string[];
-  avatarUrl: string | null;
-  phoneVerifiedAt: string | null;
-  emailVerifiedAt: string | null;
-  languagePreference: string;
-}
-
 export interface AuthSession {
   user: PublicUser;
   accessToken: string;
   refreshToken: string;
-}
-
-function toPublicUser(user: UserWithRoles): PublicUser {
-  return {
-    id: user.id,
-    fullName: user.fullName,
-    email: user.email,
-    phone: user.phone,
-    roles: user.roles.map((userRole) => userRole.role.name),
-    avatarUrl: user.avatarUrl,
-    phoneVerifiedAt: user.phoneVerifiedAt?.toISOString() ?? null,
-    emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
-    languagePreference: user.languagePreference,
-  };
 }
 
 async function issueSession(

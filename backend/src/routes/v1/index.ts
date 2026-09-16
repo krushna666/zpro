@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { sendSuccess } from '@/lib/apiResponse';
 import { authRouter } from '@/modules/auth/auth.routes';
+import { usersRouter } from '@/modules/users/users.routes';
+import { citiesRouter } from '@/modules/cities/cities.routes';
 
 export const v1Router = Router();
 
@@ -9,10 +11,10 @@ v1Router.get('/health', (_req, res) => {
 });
 
 v1Router.use('/auth', authRouter);
+v1Router.use('/users', usersRouter);
+v1Router.use('/cities', citiesRouter);
 
 // Additional module routers are mounted here as they are implemented:
-// v1Router.use('/users', usersRouter);
-// v1Router.use('/cities', citiesRouter);
 // v1Router.use('/search', searchRouter);
 // v1Router.use('/trips', tripsRouter);
 // v1Router.use('/bookings', bookingsRouter);

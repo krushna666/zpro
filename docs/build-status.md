@@ -151,11 +151,35 @@ scaffolded for a later phase. Keep it updated at the end of every phase.
   Gradle can't resolve the Android Gradle Plugin. Build and exercise this on
   a machine with normal internet access before trusting it further.
 
-## Phases 3–10 — not started
+## Phase 3 — Users/saved passengers, cities/search (backend complete)
 
-Users/saved passengers, cities/search, operators/buses/routes/trips/seat
-layouts, seat locking+booking+fare calc, Razorpay+webhooks+ticket PDF+QR,
-maps/boarding-dropping points/live tracking, notifications/email/WhatsApp,
-admin+operator CRUD screens+reports, reviews/offers/coupons/referral/support,
-and the testing/security/perf/CI-CD/production-deployment pass — per the
-phase plan in the original spec. Each will update this file when it lands.
+**Backend**
+- `src/modules/users/`: `PATCH /users/me` (profile: name, gender, DOB,
+  avatar, language); `GET/POST/PATCH/DELETE /users/me/saved-passengers`,
+  ownership-checked (a passenger not owned by the caller 404s rather than
+  leaking existence), with only one `isDefault` passenger kept per user.
+  `user.mapper.ts` now holds the shared `PublicUser`/`toPublicUser` used by
+  both `/auth/me` and this module (previously duplicated in `auth.service`).
+- `src/modules/cities/`: `GET /cities` (optional `?popular=true`), `GET
+  /cities/search?q=` (case-insensitive partial match, capped at 20) — both
+  public, no auth required. Prisma's `Decimal` lat/lng are converted to
+  plain numbers in the response so clients don't have to parse strings.
+- **Verified for real**: `tests/users.test.ts` + `tests/cities.test.ts` (10
+  new tests: profile update, saved-passenger CRUD, cross-user ownership
+  denial, single-default enforcement, city list/filter/search, validation
+  rejection) against the same live Postgres, alongside the existing auth
+  suite — 18 tests total, all green. `npm run typecheck` and `npm run lint`
+  pass clean.
+- **Not done yet**: the Android city picker / search UI and the admin Users
+  list screen aren't wired to these endpoints — `CityDao`/`CachedCity` in
+  the Android app are still waiting for a repository to populate them, and
+  Admin's `/users` route is still `PlaceholderPage`. Natural next slices.
+
+## Phases 4–10 — not started
+
+Operators/buses/routes/trips/seat layouts, seat locking+booking+fare calc,
+Razorpay+webhooks+ticket PDF+QR, maps/boarding-dropping points/live
+tracking, notifications/email/WhatsApp, admin+operator CRUD screens+reports,
+reviews/offers/coupons/referral/support, and the
+testing/security/perf/CI-CD/production-deployment pass — per the phase plan
+in the original spec. Each will update this file when it lands.

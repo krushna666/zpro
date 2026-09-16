@@ -7,3 +7,10 @@ export function validateBody(schema: ZodSchema) {
     next();
   };
 }
+
+export function validateQuery(schema: ZodSchema) {
+  return (req: Request, _res: Response, next: NextFunction): void => {
+    req.query = schema.parse(req.query) as unknown as typeof req.query;
+    next();
+  };
+}
