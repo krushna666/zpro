@@ -124,6 +124,40 @@ in**, because that sandbox's network policy blocks `dl.google.com` (which
 SDK components) — see `docs/build-status.md` for details. Build it on a
 machine with normal internet access and an installed Android SDK.
 
+## Firebase setup
+
+The Android app ships with the Firebase BOM, Cloud Messaging, Analytics and
+the `google-services` Gradle plugin already wired into
+`android/BusGoAndroid/build.gradle.kts` / `app/build.gradle.kts`. The admin
+panel (`admin/`) is a static Vite build, so it deploys as-is to Firebase
+Hosting via the `firebase.json` / `.firebaserc` at the repo root (project
+`redbus-cb9c3`).
+
+To finish wiring an existing Firebase project (`login` first — use
+`--no-localhost` on a remote/headless machine):
+
+```bash
+npx -y firebase-tools@latest login
+npx -y firebase-tools@latest use redbus-cb9c3
+
+# Register the Android app (skip if it already exists — check with `apps:list`)
+npx -y firebase-tools@latest apps:create ANDROID 'BusGo' \
+  --package-name com.busgo.app --project redbus-cb9c3
+
+# Fetch its config and save it where the Gradle plugin expects it
+npx -y firebase-tools@latest apps:sdkconfig ANDROID <APP_ID> --project redbus-cb9c3 \
+  > android/BusGoAndroid/app/google-services.json
+
+# Build the admin panel and deploy it to Firebase Hosting
+cd admin && npm install && npm run build && cd ..
+npx -y firebase-tools@latest deploy --only hosting --project redbus-cb9c3
+```
+
+`android/BusGoAndroid/app/google-services.json` is git-ignored (see
+`google-services.json.example` for the shape) — never commit the real file's
+API key/app ID pair to source control the same way `local.properties` is kept
+out of git.
+
 ## Database
 
 Schema: `backend/prisma/schema.prisma`. It covers identity/RBAC, operators,

@@ -30,6 +30,7 @@ android/BusGoAndroid/local.properties
 android/BusGoAndroid/**/build/
 android/BusGoAndroid/captures/
 android/BusGoAndroid/.cxx/
+android/BusGoAndroid/app/google-services.json
 *.iml
 *.apk
 *.aab
