@@ -175,11 +175,52 @@ scaffolded for a later phase. Keep it updated at the end of every phase.
   the Android app are still waiting for a repository to populate them, and
   Admin's `/users` route is still `PlaceholderPage`. Natural next slices.
 
-## Phases 4–10 — not started
+## Phase 4 — Operators/buses/routes/trips/seat layouts (backend complete)
 
-Operators/buses/routes/trips/seat layouts, seat locking+booking+fare calc,
-Razorpay+webhooks+ticket PDF+QR, maps/boarding-dropping points/live
-tracking, notifications/email/WhatsApp, admin+operator CRUD screens+reports,
-reviews/offers/coupons/referral/support, and the
-testing/security/perf/CI-CD/production-deployment pass — per the phase plan
-in the original spec. Each will update this file when it lands.
+**Backend**
+- `src/modules/catalog/`: admin-only (`SUPER_ADMIN`/`ADMIN`) authoring —
+  `POST/GET/PATCH /operators`, `POST /bus-types` (+public `GET`),
+  `POST /operators/:operatorId/buses`, `GET/PATCH /buses/:busId`,
+  `POST/GET /buses/:busId/layouts` (seats created together with the layout,
+  duplicate seat numbers within one layout rejected), `POST/GET /routes`
+  (with optional `RouteStop`s). Uniqueness conflicts (slug, registration
+  number, bus-type name) return typed 409s instead of raw Prisma errors.
+- `src/modules/trips/`: admin `POST /trips` validates the bus/route/layout
+  actually belong to the given operator (`BUS_OPERATOR_MISMATCH` /
+  `ROUTE_OPERATOR_MISMATCH` / `LAYOUT_BUS_MISMATCH`), then generates one
+  `TripSeat` per `BusSeat` in the layout with `price = baseFare ×
+  seat.priceMultiplier` — this is the only place seat inventory gets
+  created. Public `GET /trips/:tripId` returns the full seat map +
+  boarding/dropping points.
+- `src/modules/search/`: public `GET /search/trips?fromCityId&toCityId&date`
+  — direct-route matching only (`Route.sourceCityId`/`destinationCityId`),
+  scoped to `SCHEDULED` trips departing that calendar day. Deliberately
+  doesn't do intermediate-stop matching (a trip whose `RouteStop`s pass
+  through a city isn't found by searching that city as source/destination)
+  — flagged as a known gap rather than attempted half-way.
+- Seed data: a demo operator/bus/2+2 layout (40 seats) and a Mumbai→Pune
+  route with two trips (tomorrow 08:00 and 20:00), so search returns real
+  results out of the box. `prisma db seed` is idempotent — re-running it
+  doesn't duplicate the demo trips.
+- **Verified for real**: full admin authoring flow driven with `curl`
+  against a running server (operator → bus type → bus → layout with a
+  1.5× price-multiplier seat → route → trip, confirmed the multiplier
+  actually priced that one seat higher), plus the seeded Mumbai→Pune
+  search returning both demo trips with correct fares and seat counts, plus
+  `GET /trips/:id` returning the full seat map. `tests/catalog.test.ts` (6
+  tests, including the operator-mismatch rejection and an end-to-end
+  operator→trip build) brings the suite to 24 tests, all green against
+  real Postgres. `npm run typecheck` and `npm run lint` pass clean.
+- **Not done yet**: no admin UI for any of this (Buses/Routes/Trips are
+  still `PlaceholderPage` in the admin panel), and the Android app has no
+  search/bus-list/seat-selection screens wired up yet — `HomeScreen` is
+  still just a header. Seat *locking* (the `SeatLock` model) is Phase 5's
+  job, not this one — nothing here reserves a seat, it only lists them.
+
+## Phases 5–10 — not started
+
+Seat locking+booking+fare calc, Razorpay+webhooks+ticket PDF+QR,
+maps/boarding-dropping points/live tracking, notifications/email/WhatsApp,
+admin+operator CRUD screens+reports, reviews/offers/coupons/referral/support,
+and the testing/security/perf/CI-CD/production-deployment pass — per the
+phase plan in the original spec. Each will update this file when it lands.

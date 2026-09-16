@@ -3,7 +3,8 @@
 A bus-ticket booking platform: native Android app, Node.js/TypeScript backend,
 React admin panel, PostgreSQL + Prisma, Redis, Docker Compose.
 
-> **Build status: Phase 3 of 10 (users/cities) backend complete.** See
+> **Build status: Phase 4 of 10 (catalog/trips/search) backend complete.**
+> See
 > [`docs/build-status.md`](docs/build-status.md) for exactly what's implemented,
 > what's scaffolded-but-unwired, and what's still to come. This is a large,
 > multi-phase build (see that doc for the phase plan); this README documents
@@ -76,6 +77,16 @@ npx prisma migrate dev        # creates the schema
 npx prisma db seed            # cities, roles/permissions, dev admin user
 npm run dev                   # http://localhost:4000
 ```
+
+## Catalog and search
+
+`npx prisma db seed` also creates a demo operator (BusGo Travels), a 40-seat
+bus with a 2+2 layout, and two trips on a Mumbai→Pune route (tomorrow, 08:00
+and 20:00) — so `GET /search/trips?fromCityId=<mumbai>&toCityId=<pune>&date=<tomorrow>`
+returns real results out of the box. Writing to the catalog (`/operators`,
+`/bus-types`, `/buses`, `/routes`, `/trips`) requires an admin access token
+(`SUPER_ADMIN`/`ADMIN`); `GET /trips/:id`, `GET /bus-types` and
+`GET /search/trips` are public.
 
 ## Auth
 
