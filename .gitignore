@@ -35,6 +35,9 @@ android/BusGoAndroid/app/google-services.json
 *.apk
 *.aab
 
+# Firebase
+.firebase/
+
 # Docker
 docker-compose.override.yml
 

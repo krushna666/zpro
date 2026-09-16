@@ -85,6 +85,21 @@ scaffolded for a later phase. Keep it updated at the end of every phase.
   installed; there is no reason to expect it won't compile, but that claim
   is unverified until someone runs it for real.
 
+**Firebase** (`redbus-cb9c3`)
+- The Android app is registered in the Firebase project (`com.busgo.app`,
+  app ID `1:603499598206:android:3a29b1d4b1b102da91632f`), the
+  `google-services` Gradle plugin is applied
+  (`android/BusGoAndroid/{build.gradle.kts,app/build.gradle.kts}`), and its
+  `google-services.json` has been fetched — it's git-ignored locally per
+  `google-services.json.example`, so anyone else building the app needs to
+  fetch their own copy (see the README's Firebase setup section).
+- Firebase Hosting is configured (`firebase.json` / `.firebaserc` at the repo
+  root) to serve the admin panel's static build (`admin/dist`) and has been
+  deployed once: https://redbus-cb9c3.web.app. That panel is still
+  Phase-1-only (login posts to a backend that isn't deployed anywhere
+  reachable from that URL, and every module past Dashboard is a
+  placeholder) — the live URL exists, but it isn't yet a usable admin tool.
+
 ## Phases 2–10 — not started
 
 Auth (OTP/email/password/Google, refresh rotation), users/saved passengers,
