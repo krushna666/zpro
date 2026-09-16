@@ -41,7 +41,7 @@ fun BusGoNavHost(navController: NavHostController = rememberNavController()) {
         }
         composable(BusGoDestinations.LOGIN) {
             LoginScreen(
-                onRequestOtp = { phone -> navController.navigate(BusGoDestinations.otp(phone)) },
+                onOtpSent = { phone -> navController.navigate(BusGoDestinations.otp(phone)) },
             )
         }
         composable(
@@ -49,7 +49,14 @@ fun BusGoNavHost(navController: NavHostController = rememberNavController()) {
             arguments = listOf(navArgument("phone") { type = NavType.StringType }),
         ) { backStackEntry ->
             val phone = backStackEntry.arguments?.getString("phone").orEmpty()
-            OtpScreen(phone = phone)
+            OtpScreen(
+                phone = phone,
+                onVerified = {
+                    navController.navigate(BusGoDestinations.HOME) {
+                        popUpTo(BusGoDestinations.SPLASH) { inclusive = true }
+                    }
+                },
+            )
         }
         composable(BusGoDestinations.HOME) {
             HomeScreen()

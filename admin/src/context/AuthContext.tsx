@@ -1,40 +1,32 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
-
-interface AdminUser {
-  id: string;
-  fullName: string;
-  email: string;
-  roles: string[];
-}
+import { apiClient } from '../lib/apiClient';
+import { authStorage, type StoredAdminUser } from '../lib/authStorage';
 
 interface AuthContextValue {
-  user: AdminUser | null;
+  user: StoredAdminUser | null;
   isAuthenticated: boolean;
-  login: (user: AdminUser, accessToken: string) => void;
+  login: (user: StoredAdminUser, accessToken: string, refreshToken: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const STORAGE_TOKEN_KEY = 'busgo_admin_access_token';
-const STORAGE_USER_KEY = 'busgo_admin_user';
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AdminUser | null>(() => {
-    const raw = localStorage.getItem(STORAGE_USER_KEY);
-    return raw ? (JSON.parse(raw) as AdminUser) : null;
-  });
+  const [user, setUser] = useState<StoredAdminUser | null>(() => authStorage.getUser());
 
-  const login = (nextUser: AdminUser, accessToken: string) => {
-    localStorage.setItem(STORAGE_TOKEN_KEY, accessToken);
-    localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(nextUser));
+  const login = (nextUser: StoredAdminUser, accessToken: string, refreshToken: string) => {
+    authStorage.setSession(nextUser, accessToken, refreshToken);
     setUser(nextUser);
   };
 
   const logout = () => {
-    localStorage.removeItem(STORAGE_TOKEN_KEY);
-    localStorage.removeItem(STORAGE_USER_KEY);
+    const refreshToken = authStorage.getRefreshToken();
+    authStorage.clear();
     setUser(null);
+    if (refreshToken) {
+      // Best-effort server-side revocation — the client-side session is already gone either way.
+      void apiClient.post('/auth/logout', { refreshToken }).catch(() => undefined);
+    }
   };
 
   const value = useMemo(

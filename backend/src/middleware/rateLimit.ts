@@ -1,9 +1,15 @@
 import rateLimit from 'express-rate-limit';
 import { ApiError } from '@/lib/apiResponse';
+import { env } from '@/config/env';
 
 function handler(): never {
   throw ApiError.tooManyRequests();
 }
+
+// Rate limiting is disabled under the test runner so integration tests firing
+// many requests in a row from the same IP don't trip it; real requests are
+// never made with NODE_ENV=test.
+const skip = (): boolean => env.NODE_ENV === 'test';
 
 export const globalRateLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -11,6 +17,7 @@ export const globalRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler,
+  skip,
 });
 
 export const authRateLimiter = rateLimit({
@@ -19,6 +26,7 @@ export const authRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler,
+  skip,
 });
 
 export const otpRateLimiter = rateLimit({
@@ -27,5 +35,6 @@ export const otpRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler,
+  skip,
   keyGenerator: (req) => `${req.ip}:${req.body?.identifier ?? 'unknown'}`,
 });

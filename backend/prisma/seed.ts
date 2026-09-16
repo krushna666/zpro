@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client';
+import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
+
+const DEV_ADMIN_PASSWORD = 'ChangeMe123!';
 
 const CORE_PERMISSIONS = [
   'USER_READ',
@@ -84,11 +87,13 @@ async function main(): Promise<void> {
   }
 
   console.log('Seeding development admin user...');
+  const passwordHash = await argon2.hash(DEV_ADMIN_PASSWORD);
   await prisma.user.upsert({
     where: { email: 'admin@busgo.app' },
-    update: {},
+    update: { passwordHash },
     create: {
       email: 'admin@busgo.app',
+      passwordHash,
       fullName: 'BusGo Admin',
       referralCode: 'BUSGOADMIN',
       phoneVerifiedAt: new Date(),
@@ -101,7 +106,7 @@ async function main(): Promise<void> {
     },
   });
 
-  console.log('Seed complete.');
+  console.log(`Seed complete. Dev admin login: admin@busgo.app / ${DEV_ADMIN_PASSWORD}`);
 }
 
 main()

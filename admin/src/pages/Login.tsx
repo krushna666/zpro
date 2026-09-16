@@ -27,8 +27,8 @@ export function LoginPage() {
         email,
         password,
       });
-      const { user, accessToken } = res.data.data;
-      login(user, accessToken);
+      const { user, accessToken, refreshToken } = res.data.data;
+      login(user, accessToken, refreshToken);
       navigate('/', { replace: true });
     } catch (err) {
       if (axios.isAxiosError<ApiErrorResponse>(err) && err.response) {

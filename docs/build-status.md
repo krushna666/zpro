@@ -100,12 +100,62 @@ scaffolded for a later phase. Keep it updated at the end of every phase.
   reachable from that URL, and every module past Dashboard is a
   placeholder) — the live URL exists, but it isn't yet a usable admin tool.
 
-## Phases 2–10 — not started
+## Phase 2 — Auth (mostly complete)
 
-Auth (OTP/email/password/Google, refresh rotation), users/saved passengers,
-cities/search, operators/buses/routes/trips/seat layouts, seat
-locking+booking+fare calc, Razorpay+webhooks+ticket PDF+QR, maps/boarding-
-dropping points/live tracking, notifications/email/WhatsApp, admin+operator
-CRUD screens+reports, reviews/offers/coupons/referral/support, and the
-testing/security/perf/CI-CD/production-deployment pass — per the phase plan
-in the original spec. Each will update this file when it lands.
+**Backend** (`backend/src/modules/auth/`)
+- `POST /auth/otp/request` + `POST /auth/otp/verify`: phone-based passwordless
+  login/register. OTP codes are argon2-hashed (`OtpSession`), rate-limited
+  (`otpRateLimiter`), capped at 5 verify attempts, and expire after 5 minutes.
+  A new phone number auto-creates a `CUSTOMER` user with a unique referral
+  code; delivery is mock-only today (`MOCK_OTP`/`DEV_OTP_CODE`) — there's no
+  real SMS provider wired in yet, so production needs one before this is
+  usable outside dev (see `src/lib/otp.ts`).
+- `POST /auth/register` / `POST /auth/login`: email + argon2-hashed password,
+  used by the admin panel and available for any user.
+- `POST /auth/refresh`: rotates the refresh token on every use and stores
+  only its SHA-256 hash (`RefreshToken`); reusing an already-rotated or
+  expired token revokes the entire session family (theft-response pattern).
+- `POST /auth/logout`, `GET /auth/me`.
+- **Not implemented**: Google sign-in and password-reset-via-OTP — deferred
+  out of this pass, both are natural follow-ups.
+- **Verified for real**: `npx prisma migrate dev` + `db seed` against live
+  Postgres, full flow driven with `curl` against a running `npm run dev`
+  server (OTP request → verify → new user created; wrong code rejected;
+  wrong password rejected; refresh rotation; reuse-detection revokes the
+  session family; logout revokes the token), plus `tests/auth.test.ts`
+  (8 tests, vitest + supertest, real Postgres) covering the same. `npm run
+  typecheck`, `npm run lint`, and `npm test` all pass clean.
+
+**Admin panel** (`admin/`)
+- `Login.tsx` now stores the refresh token too; `apiClient.ts` gained a
+  response interceptor that transparently refreshes on a 401 and retries the
+  original request once, clearing the session and bouncing to `/login` if
+  the refresh itself fails. `AuthContext.logout()` best-effort revokes the
+  refresh token server-side.
+- **Verified for real**: driven through an actual Chromium browser
+  (Playwright) against the live backend — login redirects to the dashboard,
+  tokens land in `localStorage`, the session survives a full page reload,
+  and logout clears it and returns to `/login`.
+
+**Android app** (`android/BusGoAndroid/`)
+- `LoginScreen`/`OtpScreen` now call the real endpoints via new
+  `LoginViewModel`/`OtpViewModel` (loading state, inline errors, a 30s resend
+  cooldown), persist the session in `SessionDataStore` on success, and
+  navigate to Home. `TokenAuthenticator` now actually calls `POST
+  auth/refresh` on a 401 (via its own bare `OkHttpClient` to avoid recursing
+  through itself) and retries the original request once before falling back
+  to clearing the session.
+- **Known limitation, unverified**: written and reviewed like the rest of the
+  Android app, but still **not compiled** — this sandbox still blocks
+  `dl.google.com`/`maven.google.com` (confirmed again this session), so
+  Gradle can't resolve the Android Gradle Plugin. Build and exercise this on
+  a machine with normal internet access before trusting it further.
+
+## Phases 3–10 — not started
+
+Users/saved passengers, cities/search, operators/buses/routes/trips/seat
+layouts, seat locking+booking+fare calc, Razorpay+webhooks+ticket PDF+QR,
+maps/boarding-dropping points/live tracking, notifications/email/WhatsApp,
+admin+operator CRUD screens+reports, reviews/offers/coupons/referral/support,
+and the testing/security/perf/CI-CD/production-deployment pass — per the
+phase plan in the original spec. Each will update this file when it lands.

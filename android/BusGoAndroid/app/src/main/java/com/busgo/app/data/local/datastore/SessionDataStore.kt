@@ -38,6 +38,13 @@ class SessionDataStore @Inject constructor(
         dataStore.edit { prefs -> prefs[Keys.ACCESS_TOKEN] = accessToken }
     }
 
+    suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        dataStore.edit { prefs ->
+            prefs[Keys.ACCESS_TOKEN] = accessToken
+            prefs[Keys.REFRESH_TOKEN] = refreshToken
+        }
+    }
+
     suspend fun clearSession() {
         dataStore.edit { it.clear() }
     }

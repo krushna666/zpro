@@ -3,7 +3,7 @@
 A bus-ticket booking platform: native Android app, Node.js/TypeScript backend,
 React admin panel, PostgreSQL + Prisma, Redis, Docker Compose.
 
-> **Build status: Phase 1 of 10 (foundation) complete.** See
+> **Build status: Phase 2 of 10 (auth) mostly complete.** See
 > [`docs/build-status.md`](docs/build-status.md) for exactly what's implemented,
 > what's scaffolded-but-unwired, and what's still to come. This is a large,
 > multi-phase build (see that doc for the phase plan); this README documents
@@ -76,6 +76,20 @@ npx prisma migrate dev        # creates the schema
 npx prisma db seed            # cities, roles/permissions, dev admin user
 npm run dev                   # http://localhost:4000
 ```
+
+## Auth
+
+- Email/password: the seeded dev admin is `admin@busgo.app` / `ChangeMe123!`
+  (`POST /auth/login`) — this is what the admin panel's login page uses.
+- Phone OTP (used by the Android app): `POST /auth/otp/request` with a
+  10-digit Indian mobile number, then `POST /auth/otp/verify`. With
+  `MOCK_OTP=true` (the `.env.example` default) no real SMS is sent — the code
+  is always `DEV_OTP_CODE` (`123456` by default) and is also echoed back as
+  `devCode` in the request response for convenience. A first-time phone
+  number is auto-registered as a new `CUSTOMER` account on verify.
+- See [`docs/build-status.md`](docs/build-status.md) for what's implemented
+  (refresh rotation with reuse detection, logout, `/auth/me`) versus deferred
+  (Google sign-in, password reset).
 
 Other backend commands:
 

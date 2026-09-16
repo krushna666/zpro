@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { sendSuccess } from '@/lib/apiResponse';
+import { authRouter } from '@/modules/auth/auth.routes';
 
 export const v1Router = Router();
 
@@ -7,8 +8,9 @@ v1Router.get('/health', (_req, res) => {
   sendSuccess(res, { status: 'ok', timestamp: new Date().toISOString() }, 'BusGo API is healthy');
 });
 
+v1Router.use('/auth', authRouter);
+
 // Additional module routers are mounted here as they are implemented:
-// v1Router.use('/auth', authRouter);
 // v1Router.use('/users', usersRouter);
 // v1Router.use('/cities', citiesRouter);
 // v1Router.use('/search', searchRouter);
